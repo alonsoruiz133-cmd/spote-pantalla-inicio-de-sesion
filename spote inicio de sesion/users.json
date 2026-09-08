@@ -1,0 +1,14 @@
+{
+  "demo@spote.mx": {
+    "name": "Estudiante Demo",
+    "career": "Ingeniería en Sistemas Computacionales",
+    "semester": "6to",
+    "password_hash": "dfd0e9c8f814a6b3ed1618058400e742:cb7547f25f3f18b6538eedfafbe2fa8a4924ef05f971970fe645cdb717c457e5"
+  },
+  "demo@google.com": {
+    "name": "Usuario de Google",
+    "career": "No especificada",
+    "semester": "N/A",
+    "password_hash": "13b18d87951994e5a94486246149a16e:ebe4c659ffb5bc007598d4fc027e2ba8c661090a8a2e050c0c42ef4e8b48decd"
+  }
+}
