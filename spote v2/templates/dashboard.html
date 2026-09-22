@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPOTE · Mis tareas</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="dashboard-body">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" fill="#2196f3"/>
+      </svg>
+      <span>SPOTE</span>
+    </div>
+    <div class="topbar-user">
+      <span>Hola, {{USER_NAME}}</span>
+      <a class="btn btn-outline btn-small" href="/logout">Cerrar sesión</a>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="dashboard-toolbar">
+      <h1>Mis tareas y exámenes</h1>
+      <button class="btn btn-primary" id="openAddTask">+ Nueva tarea</button>
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display:none;">
+      No tienes tareas registradas todavía. Crea la primera con "Nueva tarea".
+    </div>
+
+    <div id="taskList" class="task-list"></div>
+  </main>
+
+  <!-- Modal Agregar/Editar tarea -->
+  <div class="modal-backdrop" id="taskBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="taskModalTitle">Nueva tarea</h2>
+        <button type="button" class="modal-close" id="closeTaskModal">&times;</button>
+      </div>
+      <form id="taskForm" class="form">
+        <input type="hidden" id="task_id" />
+
+        <div class="field">
+          <label for="task_title">Título *</label>
+          <input type="text" id="task_title" required />
+        </div>
+
+        <div class="field">
+          <label for="task_description">Descripción</label>
+          <textarea id="task_description" rows="3"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="task_subject">Materia *</label>
+          <input type="text" id="task_subject" required />
+        </div>
+
+        <div class="field">
+          <label for="task_professor">Profesor (Opcional)</label>
+          <input type="text" id="task_professor" />
+        </div>
+
+        <div class="field">
+          <label for="task_type">Tipo</label>
+          <select id="task_type">
+            <option value="tarea">Tarea</option>
+            <option value="examen">Examen</option>
+            <option value="proyecto">Proyecto</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="task_status">Estado</label>
+          <select id="task_status">
+            <option value="sin iniciar">Sin iniciar</option>
+            <option value="en proceso">En proceso</option>
+            <option value="terminado">Terminado</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="task_deadline">Fecha de Entrega *</label>
+          <input type="date" id="task_deadline" min="{{TODAY}}" required />
+          <span class="caption">No se permiten fechas anteriores a hoy.</span>
+        </div>
+
+        <div class="field">
+          <label for="task_complexity">Complejidad: <span id="complexityValue">5</span>/10</label>
+          <input type="range" id="task_complexity" min="1" max="10" value="5" />
+          <span class="caption">1 = Muy simple, 10 = Muy complejo</span>
+        </div>
+      </form>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-link" id="cancelTaskModal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveTaskBtn">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
