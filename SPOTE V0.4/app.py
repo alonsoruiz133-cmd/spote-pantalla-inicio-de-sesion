@@ -1,12 +1,7 @@
 """
-SPOTE - Sistema para Organización de Tareas y Exámenes
-Versión SIN DEPENDENCIAS: usa únicamente la librería estándar de Python
-(http.server, sqlite3, hashlib, json, etc.). No requiere "pip install" nada.
-
 Cómo correrla:
     python3 app.py
 Luego abre: http://localhost:5000
-
 Cuenta demo: demo@spote.mx / demo123
 """
 
