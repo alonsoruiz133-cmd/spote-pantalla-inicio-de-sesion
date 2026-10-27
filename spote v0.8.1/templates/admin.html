@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPOTE · Administración de usuarios</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="dashboard-body">
+  <header class="topbar">
+    <div class="topbar-brand">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z" fill="#2196f3"/>
+      </svg>
+      <span>SPOTE</span>
+    </div>
+    <div class="topbar-user">
+      <span>Hola, {{USER_NAME}}</span>
+      <span class="badge badge-admin">ADMINISTRADOR</span>
+      <a class="btn btn-outline btn-small" href="/logout">Cerrar sesión</a>
+    </div>
+  </header>
+
+  <main class="dashboard-main admin-main">
+    <div class="dashboard-toolbar">
+      <h1>Administración de usuarios</h1>
+      <button type="button" class="btn btn-primary" id="openAddUser">+ Agregar usuario</button>
+    </div>
+
+    <div class="flash flash-success" id="adminFlash" style="display:none;"></div>
+
+    <div class="admin-stats">
+      <div class="admin-stat"><strong id="statTotal">0</strong><span>Usuarios</span></div>
+      <div class="admin-stat"><strong id="statActive">0</strong><span>Activos</span></div>
+      <div class="admin-stat"><strong id="statInactive">0</strong><span>Desactivados</span></div>
+      <div class="admin-stat"><strong id="statAdmins">0</strong><span>Administradores</span></div>
+    </div>
+
+    <div class="admin-filters">
+      <input type="search" id="userSearch" placeholder="Buscar por nombre, N.° de control, correo..." autocomplete="off" />
+      <select id="filterCareer">
+        <option value="">Todas las carreras</option>
+        {{CAREER_OPTIONS}}
+      </select>
+      <select id="filterRole">
+        <option value="">Todos los roles</option>
+        <option value="estudiante">Alumnos</option>
+        <option value="admin">Administradores</option>
+      </select>
+      <select id="filterStatus">
+        <option value="">Todos los estados</option>
+        <option value="activo">Activos</option>
+        <option value="desactivado">Desactivados</option>
+      </select>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>N.° de control</th>
+            <th>Carrera / Semestre</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Rol / Estado</th>
+            <th>Tareas</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="usersEmpty" style="display:none;">No se encontraron usuarios con esos criterios.</div>
+  </main>
+
+  <div class="modal-backdrop" id="userBackdrop">
+    <div class="modal modal-wide">
+      <div class="modal-header">
+        <h2 id="userModalTitle">Agregar usuario</h2>
+        <button type="button" class="modal-close" id="closeUserModal">&times;</button>
+      </div>
+      <div class="flash flash-error" id="userErrors" style="display:none;"></div>
+      <form class="form" id="userForm" novalidate>
+        <p class="caption" id="legacyNote" style="display:none;">Esta cuenta se creó antes de los campos nuevos: puedes completar sus datos aquí.</p>
+        <div class="field">
+          <label for="u_role">Rol *</label>
+          <select id="u_role">
+            <option value="estudiante">Alumno</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="u_first">Nombre(s) *</label>
+          <input type="text" id="u_first" placeholder="Ej. María Fernanda" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="u_last1">Apellido paterno *</label>
+          <input type="text" id="u_last1" placeholder="Ej. Pérez" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="u_last2" id="u_last2_label">Apellido materno *</label>
+          <input type="text" id="u_last2" placeholder="Ej. López" autocomplete="off" />
+        </div>
+        <div id="studentFields">
+          <div class="field">
+            <label for="u_career">Carrera *</label>
+            <select id="u_career">
+              <option value="">Selecciona la carrera</option>
+              {{CAREER_OPTIONS}}
+            </select>
+          </div>
+          <div class="field">
+            <label for="u_semester">Semestre *</label>
+            <select id="u_semester">
+              <option value="">Selecciona el semestre</option>
+              {{SEMESTER_OPTIONS}}
+            </select>
+          </div>
+          <div class="field">
+            <label for="u_control">Número de control *</label>
+            <input type="text" id="u_control" placeholder="Ej. C21050123 o 21050123" maxlength="9" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="u_phone">Número de teléfono *</label>
+            <input type="tel" id="u_phone" placeholder="10 dígitos, ej. 8441234567" maxlength="10" autocomplete="off" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="u_email">Correo electrónico *</label>
+          <input type="email" id="u_email" placeholder="Ej. 21050123@saltillo.tecnm.mx" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="u_password" id="u_password_label">Contraseña *</label>
+          <input type="password" id="u_password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" />
+          <button type="button" class="link-button" id="togglePassword">Mostrar contraseña</button>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="cancelUserBtn">CANCELAR</button>
+          <span class="save-wrap is-blocked" id="userSaveWrap">
+            <button type="submit" class="btn btn-primary" id="userSaveBtn" disabled>Guardar</button>
+            <span class="save-tooltip" id="userSaveTooltip" role="tooltip"></span>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="statusBackdrop">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h2 id="statusTitle">Desactivar cuenta</h2>
+      </div>
+      <p id="statusMessage"></p>
+      <p class="caption" id="statusNote"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancelStatusBtn">CANCELAR</button>
+        <button type="button" class="btn btn-primary" id="confirmStatusBtn">CONFIRMAR</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="deleteUserBackdrop">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h2>Eliminar usuario definitivamente</h2>
+      </div>
+      <p>Vas a eliminar a <strong class="reopen-name" id="deleteUserName"></strong>.</p>
+      <p class="caption" id="deleteUserDetails"></p>
+      <p class="caption">Esta acción no se puede deshacer. Si solo quieres bloquear el acceso de forma temporal, usa "Desactivar".</p>
+      <div class="field">
+        <label for="deleteConfirmInput">Escribe ELIMINAR para confirmar</label>
+        <input type="text" id="deleteConfirmInput" placeholder="ELIMINAR" autocomplete="off" />
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="cancelDeleteUserBtn">CANCELAR</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteUserBtn" disabled>ELIMINAR</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>
